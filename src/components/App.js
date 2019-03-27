@@ -5,7 +5,7 @@ import User from "./user";
 
 let GET_USER_QUERY = gql`
   query {
-    getUsers {
+    getUser(name: String) {
       name
       email
     }
@@ -13,8 +13,26 @@ let GET_USER_QUERY = gql`
 `;
 
 class App extends React.Component {
+  state = {
+    name: "",
+    prepareName: ""
+  };
+
+  Login = () => {
+    this.setState({ name: this.state.prepareName });
+  };
+
   render() {
-    return (
+    return !this.state.name ? (
+      <div>
+        <h1>Loggin page</h1>
+        <input
+          placeholder="enter name..."
+          onChange={e => this.setState({ prepareName: e.target.value })}
+        />
+        <button onClick={this.Login}>Login</button>
+      </div>
+    ) : (
       <div>
         <Query query={GET_USER_QUERY}>
           {({ data, error, loading }) => {
@@ -23,9 +41,7 @@ class App extends React.Component {
 
             return (
               <div>
-                {data.getUsers.map(user => (
-                  <User key={user.id} user={user} />
-                ))}
+                <p>Welcome back {data.user.name}</p>
               </div>
             );
           }}
